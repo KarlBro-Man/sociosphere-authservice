@@ -1,4 +1,5 @@
 using AuthService.Features.Auth.DTOs;
+using AuthService.Features.Auth.Interfaces;
 using AuthService.Features.Auth.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,17 +9,22 @@ namespace AuthService.Features.Auth.Controllers;
 [Route("/api/auth")]
 public class AuthController : ControllerBase
 {
+    private readonly IAuthService _authService;
+    public AuthController(IAuthService authService)
+    {
+        _authService = authService;
+    }
+
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest loginRequest)
     {
-        var accessToken = "accessToken";
-        var refreshToken = "refreshToken";
+        var result = await _authService.LoginAsync(loginRequest);
 
-        var response = new LoginResponse
+        if(result == null)
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
-        return Ok(response);
+            return BadRequest("Invalid Credentials");
+        }
+
+        return result;
     }
 }
