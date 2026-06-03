@@ -1,0 +1,62 @@
+# =========================
+# BUILD OUTPUT
+# =========================
+bin/
+obj/
+publish/
+
+# =========================
+# VISUAL STUDIO
+# =========================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# =========================
+# VISUAL STUDIO CODE
+# =========================
+.vscode/
+
+# =========================
+# RIDER / JETBRAINS
+# =========================
+.idea/
+
+# =========================
+# ENV FILES (IMPORTANT)
+# =========================
+.env
+*.env
+
+# =========================
+# SECRETS / LOCAL CONFIG
+# =========================
+appsettings.Development.json
+appsettings.*.local.json
+secrets.json
+
+# =========================
+# GIT + META
+# =========================
+.git/
+.gitignore
+README.md
+
+# =========================
+# LOGS
+# =========================
+*.log
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# DOCKER
+# =========================
+Dockerfile
+docker-compose*.yml

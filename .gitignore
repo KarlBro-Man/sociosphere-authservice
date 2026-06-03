@@ -1,0 +1,64 @@
+# =========================
+# BUILD OUTPUT
+# =========================
+bin/
+obj/
+publish/
+
+# =========================
+# VISUAL STUDIO
+# =========================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# =========================
+# VISUAL STUDIO CODE
+# =========================
+.vscode/
+
+# =========================
+# RIDER / JETBRAINS
+# =========================
+.idea/
+
+# =========================
+# ENV FILES (IMPORTANT)
+# =========================
+.env
+*.env
+
+# =========================
+# SECRETS / LOCAL CONFIG
+# =========================
+appsettings.Development.json
+appsettings.*.local.json
+
+# Optional: if you use user secrets (dotnet user-secrets)
+secrets.json
+
+# =========================
+# DOCKER
+# =========================
+docker-compose.override.yml
+
+# =========================
+# LOGS
+# =========================
+*.log
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# .NET SPECIFIC CACHE
+# =========================
+*.cache
+*.dll
+*.exe
+*.pdb
