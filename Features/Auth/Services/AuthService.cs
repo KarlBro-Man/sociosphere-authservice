@@ -1,12 +1,13 @@
 using AuthService.Data;
 using AuthService.Features.Auth.DTOs;
 using AuthService.Features.Auth.Interfaces;
+using AuthService.Features.Auth.Models;
 using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.Features.Auth.Services;
 
-public class AuthService : IAuthService{
+public class AuthService : IAuthService {
     private readonly AppDbContext _context;
     private readonly ITokenService _tokenService;
     public AuthService(AppDbContext context, ITokenService tokenService)
@@ -46,5 +47,31 @@ public class AuthService : IAuthService{
         {
             throw new Exception("Error in login", e);
         }
+    }
+    public async Task<LoginResponse?> RegisterAsync(RegisterRequest registerRequest)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerRequest.Email);
+
+        if(user != null)
+            return null;
+
+        var newUser = new User
+        {
+            Email = registerRequest.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password),
+            IsActive = true
+        };
+
+        await _context.Users.AddAsync(newUser);
+        await _context.SaveChangesAsync();
+
+        var accessToken = _tokenService.CreateAccessToken(newUser);
+        var refreshToken = _tokenService.CreateRefreshToken();
+
+        return new LoginResponse
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
+        };
     }
 }

@@ -25,6 +25,19 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid Credentials");
         }
 
-        return result;
+        return Ok(result);
+    }
+
+    [HttpPost("register")]
+    public async Task<ActionResult<LoginResponse>> Register([FromBody] RegisterRequest registerRequest)
+    {
+        var result = await _authService.RegisterAsync(registerRequest);
+
+        if(result == null)
+        {
+            return BadRequest("Invalid Details");
+        }
+
+        return Ok(result);
     }
 }
