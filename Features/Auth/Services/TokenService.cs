@@ -60,15 +60,29 @@ public class TokenService : ITokenService
 
     public async Task<bool> CheckRefreshToken(string token)
     {
-        var result = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == token);
+        return await _context.RefreshTokens.AnyAsync(t =>
+        t.Token == token &&
+        !t.IsRevoked &&
+        t.ExpiresAt > DateTime.UtcNow);
+    }
 
-        if(result == null)
+    public async Task<string?> NewAccessToken(string token)
+    {
+        var refreshTokenIsValid = await CheckRefreshToken(token);
+        if (refreshTokenIsValid)
         {
-            return false;
+            var refreshToken = await _context.RefreshTokens.Include(t => t.User).FirstOrDefaultAsync(t => t.Token == token);
+            var user = refreshToken?.User;
+            if (user == null)
+            {   
+                return null;
+            }
+            var newAccessToken = CreateAccessToken(user);
+            return newAccessToken;
         }
         else
         {
-            return true;
+            return null;
         }
     }
 }

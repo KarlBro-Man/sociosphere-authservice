@@ -10,9 +10,11 @@ namespace AuthService.Features.Auth.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    public AuthController(IAuthService authService)
+    private readonly ITokenService _tokenService;
+    public AuthController(IAuthService authService, ITokenService tokenService)
     {
         _authService = authService;
+        _tokenService = tokenService;
     }
 
     [HttpPost("login")]
@@ -63,5 +65,29 @@ public class AuthController : ControllerBase
         );
 
         return Ok(result);
+    }
+
+    [HttpPost("refreshtoken")]
+    public async Task<ActionResult<RefreshTokenResponse>> RefreshToken()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        if(refreshToken == null)
+        {
+            return BadRequest();
+        }
+
+        var newAccessToken = await _tokenService.NewAccessToken(refreshToken);
+
+        if(newAccessToken == null)
+        {
+            return BadRequest();
+        }
+
+        var response = new RefreshTokenResponse
+        {
+            AccessToken = newAccessToken
+        };
+        return Ok(response);
     }
 }
