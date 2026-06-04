@@ -12,12 +12,14 @@ public class TokenService : ITokenService
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Email),
-            new Claim(ClaimTypes.Email, user.Email),
+            // new Claim(ClaimTypes.NameIdentifier, user.Email),
+            // new Claim(ClaimTypes.Email, user.Email),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim (JwtRegisteredClaimNames.Email, user.Email)
         };
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes("jwt:key")
+            Encoding.UTF8.GetBytes("THIS_IS_A_LONG_RANDOM_SECRET_KEY_AT_LEAST_32_CHARS")
         );
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
