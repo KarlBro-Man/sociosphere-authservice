@@ -39,7 +39,12 @@ public class AuthController : ControllerBase
             }
         );
 
-        return Ok(result);
+        var response = new LoginResponse
+        {
+            AccessToken = result.AccessToken
+        };
+
+        return Ok(response);
     }
 
     [HttpPost("register")]
@@ -64,7 +69,12 @@ public class AuthController : ControllerBase
             }
         );
 
-        return Ok(result);
+        var response = new LoginResponse
+        {
+            AccessToken = result.AccessToken
+        };
+
+        return Ok(response);
     }
 
     [HttpPost("refreshtoken")]

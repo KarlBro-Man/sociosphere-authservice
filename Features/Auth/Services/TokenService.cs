@@ -62,7 +62,7 @@ public class TokenService : ITokenService
     {
         return await _context.RefreshTokens.AnyAsync(t =>
         t.Token == token &&
-        !t.IsRevoked &&
+        t.RevokedAt == null &&
         t.ExpiresAt > DateTime.UtcNow);
     }
 

@@ -15,7 +15,7 @@ public class AuthService : IAuthService {
         _context = context;
         _tokenService = tokenService;
     }
-    public async Task<LoginResponse?> LoginAsync(LoginRequest loginRequest)
+    public async Task<LoginRegisterResultDto?> LoginAsync(LoginRequest loginRequest)
     {
         try
         {
@@ -35,7 +35,7 @@ public class AuthService : IAuthService {
             var accessToken = _tokenService.CreateAccessToken(user);
             var refreshToken = await _tokenService.CreateRefreshToken(user.Id);
 
-            var response = new LoginResponse()
+            var response = new LoginRegisterResultDto()
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
@@ -48,7 +48,7 @@ public class AuthService : IAuthService {
             throw new Exception("Error in login", e);
         }
     }
-    public async Task<LoginResponse?> RegisterAsync(RegisterRequest registerRequest)
+    public async Task<LoginRegisterResultDto?> RegisterAsync(RegisterRequest registerRequest)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerRequest.Email);
 
@@ -68,7 +68,7 @@ public class AuthService : IAuthService {
         var accessToken = _tokenService.CreateAccessToken(newUser);
         var refreshToken = await _tokenService.CreateRefreshToken(newUser.Id);
 
-        return new LoginResponse
+        return new LoginRegisterResultDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
