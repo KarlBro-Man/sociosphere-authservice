@@ -85,4 +85,27 @@ public class TokenService : ITokenService
             return null;
         }
     }
+
+    public async Task<bool> InvalidateAccessToken(string token)
+    {
+        var isValid = await CheckRefreshToken(token);
+
+        if (isValid)
+        {
+            var refreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == token);
+
+            if (refreshToken == null)
+            {
+                return false;
+            }
+
+            refreshToken.RevokedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

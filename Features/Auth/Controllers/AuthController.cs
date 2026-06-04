@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AuthService.Features.Auth.Controllers;
 
 [ApiController]
-[Route("/api/auth")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
@@ -24,7 +24,7 @@ public class AuthController : ControllerBase
 
         if(result == null)
         {
-            return BadRequest("Invalid Credentials");
+            return Unauthorized("Invalid Credentials");
         }
 
         Response.Cookies.Append(
@@ -74,7 +74,7 @@ public class AuthController : ControllerBase
             AccessToken = result.AccessToken
         };
 
-        return Ok(response);
+        return Created("", response);
     }
 
     [HttpPost("refreshtoken")]
@@ -100,4 +100,27 @@ public class AuthController : ControllerBase
         };
         return Ok(response);
     }
+
+    [HttpPost("logout")]
+    public async Task<ActionResult<RefreshTokenResponse>> LogOut()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        if(refreshToken == null)
+        {
+            return BadRequest();
+        }
+
+        var result = await _tokenService.InvalidateAccessToken(refreshToken);
+
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        Response.Cookies.Delete("refreshToken");
+
+        return Ok();
+    }
+
 }
