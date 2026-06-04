@@ -1,3 +1,4 @@
+using AuthService.Configuration;
 using AuthService.Data;
 using AuthService.Features.Auth.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 // Register Services
 builder.Services.AddScoped<IAuthService, AuthService.Features.Auth.Services.AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+// Configure JWT Settings environment variables
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
 var app = builder.Build();
 

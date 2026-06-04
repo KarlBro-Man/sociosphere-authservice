@@ -2,18 +2,22 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using AuthService.Configuration;
 using AuthService.Data;
 using AuthService.Features.Auth.Interfaces;
 using AuthService.Features.Auth.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 public class TokenService : ITokenService
 {
     private readonly AppDbContext _context;
-    public TokenService(AppDbContext context)
+    private readonly JwtSettings _jwtSettings;
+    public TokenService(AppDbContext context, IOptions<JwtSettings> jwtSettings)
     {
         _context = context;
+        _jwtSettings = jwtSettings.Value;
     }
     public string CreateAccessToken(User user)
     {
@@ -26,14 +30,14 @@ public class TokenService : ITokenService
         };
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes("THIS_IS_A_LONG_RANDOM_SECRET_KEY_AT_LEAST_32_CHARS")
+            Encoding.UTF8.GetBytes(_jwtSettings.Secret)
         );
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "jwt:issuer",
-            audience: "jwt:audience",
+            issuer: _jwtSettings.Issuer,
+            audience: _jwtSettings.Audience,
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: creds
