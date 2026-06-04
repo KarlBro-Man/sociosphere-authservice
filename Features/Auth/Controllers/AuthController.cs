@@ -25,6 +25,18 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid Credentials");
         }
 
+        Response.Cookies.Append(
+            "refreshToken",
+            result.RefreshToken.Token,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = result.RefreshToken.ExpiresAt
+            }
+        );
+
         return Ok(result);
     }
 
@@ -37,6 +49,18 @@ public class AuthController : ControllerBase
         {
             return BadRequest("Invalid Details");
         }
+
+        Response.Cookies.Append(
+            "refreshToken",
+            result.RefreshToken.Token,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = result.RefreshToken.ExpiresAt
+            }
+        );
 
         return Ok(result);
     }

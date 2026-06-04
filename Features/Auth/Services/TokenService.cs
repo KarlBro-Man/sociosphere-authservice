@@ -2,12 +2,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using AuthService.Data;
 using AuthService.Features.Auth.Interfaces;
 using AuthService.Features.Auth.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 public class TokenService : ITokenService
 {
+    private readonly AppDbContext _context;
+    public TokenService(AppDbContext context)
+    {
+        _context = context;
+    }
     public string CreateAccessToken(User user)
     {
         var claims = new List<Claim>
@@ -34,8 +41,34 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string CreateRefreshToken()
+    public async Task<RefreshToken> CreateRefreshToken(long userId)
     {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        var tokenString = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+        var refreshToken = new RefreshToken
+        {
+            Token = tokenString,
+            ExpiresAt = DateTime.UtcNow.AddDays(30),
+            UserId = userId
+        };
+
+        await _context.RefreshTokens.AddAsync(refreshToken);
+        await _context.SaveChangesAsync();
+        
+        return refreshToken;
+    }
+
+    public async Task<bool> CheckRefreshToken(string token)
+    {
+        var result = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == token);
+
+        if(result == null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }

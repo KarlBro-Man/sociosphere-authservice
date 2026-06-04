@@ -33,7 +33,7 @@ public class AuthService : IAuthService {
                 return null;
 
             var accessToken = _tokenService.CreateAccessToken(user);
-            var refreshToken = _tokenService.CreateRefreshToken();
+            var refreshToken = await _tokenService.CreateRefreshToken(user.Id);
 
             var response = new LoginResponse()
             {
@@ -66,7 +66,7 @@ public class AuthService : IAuthService {
         await _context.SaveChangesAsync();
 
         var accessToken = _tokenService.CreateAccessToken(newUser);
-        var refreshToken = _tokenService.CreateRefreshToken();
+        var refreshToken = await _tokenService.CreateRefreshToken(newUser.Id);
 
         return new LoginResponse
         {
