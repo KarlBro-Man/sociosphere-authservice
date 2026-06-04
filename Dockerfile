@@ -12,4 +12,4 @@ COPY --from=build /app/publish .
 
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "dotnetwebapi.dll"]
+ENTRYPOINT ["dotnet", "AuthService.dll"]
